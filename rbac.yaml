@@ -12,14 +12,15 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role
 rules:
-  - apiGroups:
-      - "apps"
-    resources:
-      - "deployments"
-    verbs:
-      - "create"
-      - "get"
-      - "update"
+- apiGroups:
+    - "apps"
+  resources:
+    - "deployments"
+  verbs:
+    - "create"
+    - "get"
+    - "list"
+    - "update"
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1

@@ -20,15 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install eksctl
-        run: |
-          # Download eksctl and verify the checksum is what we expect.
-          wget https://github.com/weaveworks/eksctl/releases/download/v0.79.0/eksctl_Linux_amd64.tar.gz
-          cat eksctl_Linux_amd64.tar.gz | sha256sum -c EKSCTL-CHECKSUM
-          tar xzf eksctl_Linux_amd64.tar.gz
-          sudo mv eksctl /usr/local/bin
-          rm eksctl_Linux_amd64.tar.gz
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
@@ -60,5 +51,4 @@ jobs:
       - name: Connect to cluster via eksctl
         run: |
           aws eks update-kubeconfig --name aws-tenant
-          # eksctl utils write-kubeconfig --cluster=aws-tenant
           kubectl get deploy
