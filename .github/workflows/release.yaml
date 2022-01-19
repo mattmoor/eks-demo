@@ -20,11 +20,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1.6.0
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/eks-demo-deployer
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Install eksctl
+        run: |
+          # Download eksctl and verify the checksum is what we expect.
+          wget https://github.com/weaveworks/eksctl/releases/download/v0.79.0/eksctl_Linux_amd64.tar.gz
+          cat eksctl_Linux_amd64.tar.gz | sha256sum -c EKSCTL-CHECKSUM
+          tar xzf eksctl_Linux_amd64.tar.gz
+          sudo mv /tmp/eksctl /usr/local/bin
+          rm eksctl_Linux_amd64.tar.gz
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -47,3 +50,14 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1.6.0
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/eks-demo-deployer
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Connect to cluster via eksctl
+        run: |
+          eksctl utils write-kubeconfig --cluster=aws-tenant
+          kubectl get deploy
