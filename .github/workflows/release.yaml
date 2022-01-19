@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push container image
-        id: push-step
+        id: build-and-push
         uses: docker/build-push-action@master
         with:
           push: true
@@ -48,7 +48,10 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/eks-demo-deployer
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Connect to cluster via eksctl
+      - name: Connect to cluster and deploy
         run: |
           aws eks update-kubeconfig --name aws-tenant
-          kubectl get deploy
+
+          echo Deploying ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+          kubectl set image deployment/example-deployment app=ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+
