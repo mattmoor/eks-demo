@@ -59,5 +59,6 @@ jobs:
 
       - name: Connect to cluster via eksctl
         run: |
-          eksctl utils write-kubeconfig --cluster=aws-tenant
+          aws eks update-kubeconfig --name aws-tenant
+          # eksctl utils write-kubeconfig --cluster=aws-tenant
           kubectl get deploy
