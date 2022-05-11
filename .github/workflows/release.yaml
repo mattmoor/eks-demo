@@ -63,6 +63,8 @@ jobs:
         run: |
           aws eks update-kubeconfig --name aws-tenant
 
+          kubectl config view
+
           echo Deploying ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
           kubectl set image deployment/example-deployment app=ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
 
